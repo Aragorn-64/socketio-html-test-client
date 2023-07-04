@@ -148,8 +148,12 @@ connectButton.addEventListener("click", () => {
     updateMetrics()
     if (connectButton.textContent === "Connect") {
         try {
-            const numConns = parseInt(numConnsInput.value);
-            const connRate = parseInt(connRateInput.value);
+            let numConns = 1
+            let connRate = 1
+            if (!checkbox.checked) {
+                numConns = parseInt(numConnsInput.value);
+                connRate = parseInt(connRateInput.value);
+            }
             const timeInterval = 1000 / connRate
 
             if (isNaN(numConns) || isNaN(connRate)) {
@@ -170,6 +174,7 @@ connectButton.addEventListener("click", () => {
         socketConns.forEach((sock) => {
             sock.close();
         });
+        listeningTo.clear()
         connectButton.textContent = "Connect";
         connectButton.style.backgroundColor = "#4CAF50";
     }
@@ -182,6 +187,7 @@ sendButton.addEventListener("click", () => {
     }, 200); // Wait for 200 milliseconds
 
     if (channelInput.value != "message" && !listeningTo.has(channelInput.value)) {
+        listeningTo.add(channelInput.value)
         socketConns.forEach((sock) => {
             //attach listener for that event on all connected sockets
             sock.on(channelInput.value, (message) => {
