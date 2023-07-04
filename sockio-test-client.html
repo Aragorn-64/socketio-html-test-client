@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Socket.io Test Client</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="shortcut icon"
+      href="https://p7.hiclipart.com/preview/162/702/552/5bbc127e63cd2-thumbnail.jpg"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <h1>Socket IO server Test Client</h1>
+    <div class="col">
+      <div class="row" id="urlRow">
+        <input
+          type="text"
+          id="urlInput"
+          class="input-box"
+          placeholder="Enter URL"
+        />
+        <label for="simpleConn" id="simpleConnLabel">Single Conn? </label>
+        <input type="checkbox" name="simpleConn" id="simpleConnCheck" checked />
+        <button id="connectButton" class="button">Connect</button>
+      </div>
+      <div class="row" id="connOptionsRow">
+        <span
+          ><label for="numConns">Number of Conns:</label>
+          <input type="number" id="numConns" min="0"
+        /></span>
+        <span
+          ><label for="connRate">Connection Rate (conn/sec):</label>
+          <input type="number" id="connRate" min="0"
+        /></span>
+      </div>
+      <div class="row">
+        <div class="col" id="inputCol">
+          <h3>Input</h3>
+          <br />
+          <div class="row">
+            <textarea
+              id="messageContent"
+              class="input-box"
+              placeholder="Enter message content"
+              rows="8"
+              cols="40"
+            ></textarea>
+          </div>
+          <div class="row">
+            <input
+              type="text"
+              id="channelInput"
+              class="input-box"
+              placeholder="Enter channel"
+            />
+            <button id="sendButton" class="button">Send Message</button>
+          </div>
+        </div>
+        <!-- <div class="col">
+          <h3>Output</h3>
+          <br />
+          <div class="output-container">
+            <div class="output-row">Output 1</div>
+            <div class="output-row">Output 2</div>
+            <div class="output-row">Output 3</div>
+            <div class="output-row">Output 4</div>
+            <div class="output-row">Output 5</div>
+          </div>
+        </div> -->
+      </div>
+      <div class="row metrics">
+        <div class="col">
+          <div class="metrics-heading">Metrics</div>
+          <br />
+          <table class="metrics-table">
+            <tr>
+              <td>Current Conns:</td>
+              <td id="currentConns">X</td>
+            </tr>
+            <tr>
+              <td>Max Conns:</td>
+              <td id="maxConns">X</td>
+            </tr>
+            <tr>
+              <td>Total Messages Sent:</td>
+              <td id="totalMessagesSent">X</td>
+            </tr>
+            <tr>
+              <td>Total Messages Rec:</td>
+              <td id="totalMessagesReceived">X</td>
+            </tr>
+            <tr>
+              <td>Messages Rec in last second:</td>
+              <td id="messagesReceivedLastSecond">X</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <button id="helpButton" class="help-button">Help</button>
+
+    <div id="helpDiv" class="help-div">
+      <h3>Sample to subscribe over "message" channel:</h3>
+      <pre>
+    {
+      "SeqNo": 2,
+      "Action": "sub.add.topics",
+      "Topic": "",
+      "RType": "O1",
+      "Body": "17.22, 17.25"
+    }
+  </pre
+      >
+      <h3>How to subscribe to status messages</h3>
+      <ul>
+        <li>Use channel "stat-message"</li>
+        <li>Send an empty message to get one response of current status</li>
+        OR
+        <li>
+          Send "watch status" in the message to subscribe to updates on status
+          every 2 seconds
+        </li>
+      </ul>
+    </div>
+
+    <script type="module" src="logic.js"></script>
+  </body>
+</html>
