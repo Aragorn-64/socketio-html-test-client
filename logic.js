@@ -112,7 +112,11 @@ function setToLocalStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
+let disabled = false
+
 function newConn() {
+    if (disabled) return
+
     if (urlInput.value == "") {
         throw new Error('URL field is empty')
     }
@@ -148,6 +152,7 @@ connectButton.addEventListener("click", () => {
     updateMetrics()
     if (connectButton.textContent === "Connect") {
         try {
+            disabled = false
             let numConns = 1
             let connRate = 1
             if (!checkbox.checked) {
@@ -163,6 +168,7 @@ connectButton.addEventListener("click", () => {
             // let connectionsCount = 0; // Variable to keep track of the number of connections created
 
             for (let i = 0; i < numConns; i++) {
+                if (disabled) break
                 setTimeout(newConn, i * timeInterval);
             }
         } catch (err) {
@@ -170,6 +176,7 @@ connectButton.addEventListener("click", () => {
             console.log(err);
         }
     } else {
+        disabled = true
         // clearInterval(connectionInterval);
         socketConns.forEach((sock) => {
             sock.close();

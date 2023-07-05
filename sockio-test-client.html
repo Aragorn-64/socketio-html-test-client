@@ -102,15 +102,17 @@
     <div id="helpDiv" class="help-div">
       <h3>Sample to subscribe over "message" channel:</h3>
       <pre>
-    {
-      "SeqNo": 2,
-      "Action": "sub.add.topics",
-      "Topic": "",
-      "RType": "O1",
-      "Body": "17.22, 17.25"
-    }
-  </pre
-      >
+        {
+          "InputFormat" : 0,
+          "Body" : {
+              "17.22/tl2" : "S",
+              "17.25/tl2" : "S"
+          },
+          "OutputFormat" : "json",
+          "ApiKey" : "ajsdbnsuibd2u12937821",
+          "SeqNo" : 0
+        }
+      </pre>
       <h3>How to subscribe to status messages</h3>
       <ul>
         <li>Use channel "stat-message"</li>
