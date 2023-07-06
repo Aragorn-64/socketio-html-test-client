@@ -165,7 +165,7 @@ connectButton.addEventListener("click", () => {
                 throw new Error('Please enter valid numbers for the number of connections and connection rate.');
             }
 
-            // let connectionsCount = 0; // Variable to keep track of the number of connections created
+            // let connectionsCount = 0; // Variable to keegp track of the number of connections created
 
             for (let i = 0; i < numConns; i++) {
                 if (disabled) break
