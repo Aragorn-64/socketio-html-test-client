@@ -1,6 +1,6 @@
 const fs = require('fs');
-// const { io } = require('socket.io-client');
-import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
+const { io } = require('socket.io-client');
+// import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
 // Read the configuration from the JSON file
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
@@ -15,12 +15,11 @@ const {
     messageDelay
 } = config;
 
-// currentConns,
-// maxConns,
-// totalMessagesSent,
-// totalMessagesReceived,
-// messagesReceivedLastSecond,
-
+let currentConns = 0;
+let maxConns = 0;
+let totalMessagesSent = 0;
+let totalMessagesReceived = 0;
+let messagesReceivedLastSecond = 0;
 
 let socketConns = new Set();
 let listeningTo = new Set();
@@ -42,10 +41,12 @@ function newConn() {
     sock.on('connect', () => {
         socketConns.add(sock);
         console.log(`sock ${sock.id} connected`);
+        currentConns++;
     });
 
     sock.on('message', (message) => {
-        console.log(`Message received: ${message}`);
+        totalMessagesReceived++;
+        // console.log(`Message received: ${message}`);
     });
 
     sock.on('disconnect', (reason) => {
@@ -55,18 +56,26 @@ function newConn() {
 };
 
 const startConnections = () => {
-    let numConns = parseInt(numConnsInput);
-    let connRate = parseInt(connRateInput);
+    if (simpleConnCheck === true) {
+        newConn()
+    }
+    else {
+        let numConns = parseInt(numConnsInput);
+        let connRate = parseInt(connRateInput);
 
-    if (isNaN(numConns) || isNaN(connRate)) {
-        throw new Error('Please enter valid numbers for the number of connections and connection rate.');
+
+
+        if (isNaN(numConns) || isNaN(connRate)) {
+            throw new Error('Please enter valid numbers for the number of connections and connection rate.');
+        }
+
+        const timeInterval = 1000 / connRate;
+
+        for (let i = 0; i < numConns; i++) {
+            setTimeout(newConn, i * timeInterval);
+        }
     }
 
-    const timeInterval = 1000 / connRate;
-
-    for (let i = 0; i < numConns; i++) {
-        setTimeout(newConn, i * timeInterval);
-    }
 };
 
 const sendMessage = () => {
@@ -78,10 +87,29 @@ const sendMessage = () => {
 
     setTimeout(() => {
         socketConns.forEach((sock) => {
-            sock.emit(channelInput, messageContentInput);
+            totalMessagesSent++;
+            sock.emit(channelInput, JSON.stringify(messageContentInput));
         });
-    }, delay);
+        console.log('sent messages')
+    }, delay * 1000);
 };
 
+let prevTotal = 0
+const startLogging = () => {
+    setInterval(() => {
+        messagesReceivedLastSecond = totalMessagesReceived - prevTotal
+        prevTotal = totalMessagesReceived
+        console.table({
+            currentConns: socketConns.size,
+            maxConns: Math.max(currentConns, maxConns),
+            totalMessagesSent,
+            totalMessagesReceived,
+            messagesReceivedLastSecond
+        });
+    }, 500);
+}
+
 startConnections();
+console.log(`Waiting for ${messageDelay} seconds to send messages ...`)
 sendMessage();
+startLogging();
