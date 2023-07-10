@@ -135,8 +135,8 @@ function newConn() {
 
     sock.on("message", (message) => {
         totalMessagesReceived.innerHTML++;
-        console.log(`${sock.id}`);
-        console.log(message)
+        // console.log(`${sock.id}`);
+        // console.log(message)
     });
 
     sock.on("disconnect", (reason) => {
@@ -199,24 +199,26 @@ sendButton.addEventListener("click", () => {
             //attach listener for that event on all connected sockets
             sock.on(channelInput.value, (message) => {
                 totalMessagesReceived.innerHTML++;
-                console.log(
-                    `${sock.id} : ${channelInput.value} : `
-                );
-                console.log(message)
+                // console.log(`${sock.id} : ${channelInput.value} : `);
+                // console.log(message)
             });
         });
     }
 
     //send the message input to all connected sockets
     socketConns.forEach((sock) => {
+        totalMessagesSent.innerHTML++;
         sock.emit(channelInput.value, messageContentInput.value);
     });
 });
 
+let prevTotal = 0
 // connection count metric
 function updateMetrics() {
     currentConns.innerHTML = socketConns.size
     maxConns.innerHTML = Math.max(currentConns.innerHTML, maxConns.innerHTML)
+    messagesReceivedLastSecond.innerHTML = totalMessagesReceived.innerHTML - prevTotal
+    prevTotal = totalMessagesReceived.innerHTML
 }
 
 setInterval(updateMetrics, 1000)

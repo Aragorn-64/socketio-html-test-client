@@ -1,0 +1,15 @@
+{
+    "urlInput": "http://localhost:3000",
+    "simpleConnCheck": true,
+    "numConnsInput": 1,
+    "connRateInput": 1,
+    "messageContentInput": "Hello, world!",
+    "channelInput": "message",
+    "currentConns": 0,
+    "maxConns": 0,
+    "totalMessagesSent": 0,
+    "totalMessagesReceived": 0,
+    "messagesReceivedLastSecond": 0,
+    "messageDelay" : 20
+  }
+  
