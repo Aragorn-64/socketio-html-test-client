@@ -1,5 +1,6 @@
 const urlInput = document.getElementById("urlInput");
 const simpleConnCheck = document.getElementById("simpleConnCheck");
+const lastMessageCheck = document.getElementById("lastMsgDisplayCheck");
 const connectButton = document.getElementById("connectButton");
 const numConnsInput = document.getElementById("numConns");
 const connRateInput = document.getElementById("connRate");
@@ -15,6 +16,8 @@ const totalMessagesReceived = document.getElementById(
 const messagesReceivedLastSecond = document.getElementById(
     "messagesReceivedLastSecond"
 );
+const messageOutputCol = document.getElementById("messageOutputCol");
+const messageOutputBox = document.getElementById("messageOutput");
 
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
@@ -30,6 +33,7 @@ function errAlert(err) {
 const defaultValues = {
     urlInput: "",
     simpleConnCheck: true,
+    lastMessageCheck: true,
     numConnsInput: 1,
     connRateInput: 1,
     messageContentInput: "",
@@ -46,6 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const values = {
         urlInput: getFromLocalStorage("urlInput"),
         simpleConnCheck: getFromLocalStorage("simpleConnCheck"),
+        lastMessageCheck: getFromLocalStorage("lastMessageCheck"),
         numConnsInput: getFromLocalStorage("numConnsInput"),
         connRateInput: getFromLocalStorage("connRateInput"),
         messageContentInput: getFromLocalStorage("messageContentInput"),
@@ -62,6 +67,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // Set values to elements
     urlInput.value = values.urlInput;
     simpleConnCheck.checked = values.simpleConnCheck;
+    lastMessageCheck.checked = values.lastMessageCheck;
     numConnsInput.value = values.numConnsInput;
     connRateInput.value = values.connRateInput;
     messageContentInput.value = values.messageContentInput;
@@ -72,8 +78,11 @@ window.addEventListener("DOMContentLoaded", () => {
     totalMessagesReceived.innerHTML = 0;
     messagesReceivedLastSecond.innerHTML = 0;
 
-    if (checkbox.checked) {
+    if (simpleConnCheck.checked) {
         connOptionsRow.classList.add("hidden");
+    }
+    if (!lastMessageCheck.checked) {
+        messageOutputCol.classList.add("hidden");
     }
 });
 
@@ -81,20 +90,31 @@ window.addEventListener("DOMContentLoaded", () => {
 window.addEventListener("beforeunload", () => {
     setToLocalStorage("urlInput", urlInput.value);
     setToLocalStorage("simpleConnCheck", simpleConnCheck.checked);
+    setToLocalStorage("lastMessageCheck", lastMessageCheck.checked);
     setToLocalStorage("numConnsInput", numConnsInput.value);
     setToLocalStorage("connRateInput", connRateInput.value);
     setToLocalStorage("messageContentInput", messageContentInput.value);
     setToLocalStorage("channelInput", channelInput.value);
 });
 
-const checkbox = document.getElementById("simpleConnCheck");
+// const simpleConnCheck = document.getElementById("simpleConnCheck");
 const connOptionsRow = document.getElementById("connOptionsRow");
 
-checkbox.addEventListener("change", () => {
-    if (checkbox.checked) {
+simpleConnCheck.addEventListener("change", () => {
+    if (simpleConnCheck.checked) {
         connOptionsRow.classList.add("hidden");
     } else {
         connOptionsRow.classList.remove("hidden");
+    }
+});
+
+lastMessageCheck.addEventListener("change", () => {
+    if (!lastMessageCheck.checked) {
+        // messageOutputBox.classList.add("hidden");
+        messageOutputCol.style.display = "none"
+    } else {
+        // messageOutputBox.classList.remove("hidden");
+        messageOutputCol.style.display = "block"
     }
 });
 
@@ -135,6 +155,7 @@ function newConn() {
 
     sock.on("message", (message) => {
         totalMessagesReceived.innerHTML++;
+        messageOutputBox.innerHTML = JSON.stringify(message)
         // console.log(`${sock.id}`);
         // console.log(message)
     });
@@ -155,7 +176,7 @@ connectButton.addEventListener("click", () => {
             disabled = false
             let numConns = 1
             let connRate = 1
-            if (!checkbox.checked) {
+            if (!simpleConnCheck.checked) {
                 numConns = parseInt(numConnsInput.value);
                 connRate = parseInt(connRateInput.value);
             }
