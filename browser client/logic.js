@@ -33,7 +33,7 @@ function errAlert(err) {
 const defaultValues = {
     urlInput: "",
     simpleConnCheck: true,
-    lastMessageCheck: true,
+    lastMessageCheck: false,
     numConnsInput: 1,
     connRateInput: 1,
     messageContentInput: "",
