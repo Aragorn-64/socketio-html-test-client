@@ -184,40 +184,21 @@ input[type="number"] {
   white-space: pre-wrap;
 }
 
+.col#messageOutputCol{
+  height: 100%;
+}
+
 .message-output{
   border: 1px solid #ccc;
   border-radius: 5px;
+  min-height: 100px;
+  min-width: 200px;
+  max-width: 60%;
+  margin-bottom: 5px;
 }
 
-.button-checkbox {
-  display: inline-block;
-  position: relative;
+.message-output-box{
+  max-width: 100%;
 }
 
-.button-checkbox input[type="checkbox"] {
-  display: none;
-}
 
-.button-checkbox .button {
-  display: inline-block;
-  margin-left: 5px;
-  margin-right: 5px;
-  padding: 5px;
-  border-radius: 5px;
-  background-color: #4caf50;
-  color: #fff;
-  cursor: pointer;
-}
-
-.button-checkbox .button:before {
-  content: "Play";
-}
-
-.button-checkbox input[type="checkbox"]:checked + .button {
-  background-color: #999e99;
-  color: #fff;
-}
-
-.button-checkbox input[type="checkbox"]:checked + .button:before {
-  content: "Pause";
-}

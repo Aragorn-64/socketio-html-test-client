@@ -1,3 +1,21 @@
+const protoPath = './serveroutput.proto'
+
+function decodeServerOutput(encodedData) {
+    return new Promise((resolve, reject) => {
+        protobuf.load(protoPath, (err, root) => {
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            const messageType = root.lookupType("serveroutputpackage.ServerOutput");
+            const decodedMessage = messageType.decode(encodedData);
+
+            resolve(decodedMessage);
+        });
+    });
+}
+
 const urlInput = document.getElementById("urlInput");
 const simpleConnCheck = document.getElementById("simpleConnCheck");
 const lastMessageCheck = document.getElementById("lastMsgDisplayCheck");
@@ -18,6 +36,9 @@ const messagesReceivedLastSecond = document.getElementById(
 );
 const messageOutputCol = document.getElementById("messageOutputCol");
 const messageOutputBox = document.getElementById("messageOutput");
+const messageSizeSpan = document.getElementById("msgSize")
+
+let givenBlockAlert = false
 
 import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
@@ -43,6 +64,7 @@ const defaultValues = {
     totalMessagesSent: 0,
     totalMessagesReceived: 0,
     messagesReceivedLastSecond: 0,
+    blockAlertShown: false
 };
 
 // Load values from localStorage on DOMContentLoaded
@@ -55,6 +77,7 @@ window.addEventListener("DOMContentLoaded", () => {
         connRateInput: getFromLocalStorage("connRateInput"),
         messageContentInput: getFromLocalStorage("messageContentInput"),
         channelInput: getFromLocalStorage("channelInput"),
+        blockAlertShown: getFromLocalStorage("blockAlertShown"),
     };
 
     // Set values to defaults if not found in localStorage
@@ -77,6 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
     totalMessagesSent.innerHTML = 0;
     totalMessagesReceived.innerHTML = 0;
     messagesReceivedLastSecond.innerHTML = 0;
+    givenBlockAlert = values.blockAlertShown
 
     if (simpleConnCheck.checked) {
         connOptionsRow.classList.add("hidden");
@@ -95,6 +119,8 @@ window.addEventListener("beforeunload", () => {
     setToLocalStorage("connRateInput", connRateInput.value);
     setToLocalStorage("messageContentInput", messageContentInput.value);
     setToLocalStorage("channelInput", channelInput.value);
+    setToLocalStorage("blockAlertShown", givenBlockAlert);
+
 });
 
 // const simpleConnCheck = document.getElementById("simpleConnCheck");
@@ -112,9 +138,12 @@ lastMessageCheck.addEventListener("change", () => {
     if (!lastMessageCheck.checked) {
         // messageOutputBox.classList.add("hidden");
         messageOutputCol.style.display = "none"
+        // messageOutputBox.innerHTML = ""
+        lastMessage = ""
     } else {
         // messageOutputBox.classList.remove("hidden");
         messageOutputCol.style.display = "block"
+        lastMessage = messageOutputBox.innerHTML
     }
 });
 
@@ -133,8 +162,21 @@ function setToLocalStorage(key, value) {
 }
 
 let disabled = false
+let lastMessage = ""
+
+
+setInterval(countMessageSize, 3000)
+
+function countMessageSize() {
+    if (lastMessage == "" || lastMessage == null) return
+
+    let fileSize = lastMessage.byteLength
+    messageSizeSpan.innerHTML = fileSize
+    console.log('File size:', fileSize, 'bytes');
+}
 
 function newConn() {
+    console.log('new conn called')
     if (disabled) return
 
     if (urlInput.value == "") {
@@ -152,10 +194,22 @@ function newConn() {
         connectButton.textContent = "Disconnect";
         connectButton.style.backgroundColor = "#F44336";
     });
-
+    let SOM = null
     sock.on("message", (message) => {
-        totalMessagesReceived.innerHTML++;
-        messageOutputBox.innerHTML = JSON.stringify(message)
+        const encodedData = new Uint8Array(message); // Assuming the message is received as a Uint8Array
+
+        decodeServerOutput(encodedData)
+            .then((decodedMessage) => {
+                // Handle the decoded message
+                console.log(decodedMessage);
+                totalMessagesReceived.innerHTML++;
+                messageOutputBox.innerHTML = JSON.stringify(decodedMessage)
+                lastMessage = decodedMessage
+            })
+            .catch((error) => {
+                // Handle any errors
+                console.error(error);
+            });
         // console.log(`${sock.id}`);
         // console.log(message)
     });
@@ -257,3 +311,6 @@ helpButton.addEventListener('click', () => {
         helpDiv.classList.remove('show');
     }
 });
+
+
+// import protobuf from "https://cdn.jsdelivr.net/npm/protobufjs@7.X.X/dist/protobuf.js"

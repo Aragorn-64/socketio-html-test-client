@@ -2,12 +2,14 @@
 <html>
   <head>
     <title>Socket.io Test Client</title>
-    <link rel="stylesheet" href="style.css" />
+
     <link
       rel="shortcut icon"
       href="https://p7.hiclipart.com/preview/162/702/552/5bbc127e63cd2-thumbnail.jpg"
       type="image/x-icon"
     />
+    <script type="module" crossorigin src="./assets/index-0afabad3.js"></script>
+    <link rel="stylesheet" href="./assets/index-6071978b.css" />
   </head>
   <body>
     <h1>Socket IO server Test Client</h1>
@@ -107,7 +109,10 @@
         <div class="col" id="messageOutputCol">
           <div class="message-output" id="messageOutput"></div>
           <div class="message-options">
-            Message Size : <span id="msgSize"> ~ </span>
+            <label class="button-checkbox">
+              <input type="checkbox" id="play-pause-checkbox" />
+              <span class="button"></span>
+            </label>
           </div>
         </div>
       </div>
@@ -139,8 +144,5 @@
         </li>
       </ul>
     </div>
-    <script src="//cdn.jsdelivr.net/npm/protobufjs@7.X.X/dist/protobuf.js"></script>
-    <script type="module" src="logic.js"></script>
-    <script type="module" src="protobufService.js"></script>
   </body>
 </html>

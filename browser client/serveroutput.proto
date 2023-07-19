@@ -1,0 +1,11 @@
+package serveroutputpackage;
+syntax = "proto3";
+
+message SingleOutput{
+    string topic = 1;
+    bytes binaryData = 2;
+}
+
+message ServerOutput{
+    repeated SingleOutput singleOutputs = 1;
+}
