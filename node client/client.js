@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { io } = require('socket.io-client');
-// import { io } from "https://cdn.socket.io/4.4.1/socket.io.esm.min.js";
 
 // Read the configuration from the JSON file
 const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
@@ -28,25 +27,31 @@ function errAlert(err) {
     console.error(err);
 }
 
+let endCount = 0;
 function newConn() {
     if (urlInput === '') {
         throw new Error('URL field is empty');
     }
+    let end = endCount % 5 + 1
+    endCount++
+    const selectedUrl = urlInput + end; // Cyclic selection of URLs
+    console.log(end)
 
-    const sock = io(urlInput, {
+    const sock = io(selectedUrl, {
         transports: ['websocket'],
         upgrade: false
     });
 
     sock.on('connect', () => {
         socketConns.add(sock);
-        console.log(`sock ${sock.id} connected`);
+        console.log(`sock ${sock.id} connected to ${selectedUrl}`);
         currentConns++;
     });
 
     sock.on('message', (message) => {
         totalMessagesReceived++;
-        // console.log(`Message received: ${message}`);
+        // if(selectedUrl[-1])
+        // console.log(message);
     });
 
     sock.on('disconnect', (reason) => {
@@ -62,8 +67,6 @@ const startConnections = () => {
     else {
         let numConns = parseInt(numConnsInput);
         let connRate = parseInt(connRateInput);
-
-
 
         if (isNaN(numConns) || isNaN(connRate)) {
             throw new Error('Please enter valid numbers for the number of connections and connection rate.');

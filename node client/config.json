@@ -1,8 +1,8 @@
 {
-    "urlInput": "http://sage-trader.in:5000",
-    "simpleConnCheck": true,
-    "numConnsInput": 1,
-    "connRateInput": 1,
+    "urlInput": "http://sage-trader.in:500",
+    "simpleConnCheck": false,
+    "numConnsInput": 10,
+    "connRateInput": 20,
     "messageContentInput": {
         "InputFormat" : 0,
         "Body" : {
@@ -141,7 +141,6 @@
             "17.2277/tl2": "S",
             "17.23650/tl2": "S"
         },
-        "OutputFormat" : "json",
         "ApiKey" : "ajsdbnsuibd2u12937821",
         "SeqNo" : 0
     },

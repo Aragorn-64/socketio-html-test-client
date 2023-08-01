@@ -201,7 +201,7 @@ function newConn() {
         decodeServerOutput(encodedData)
             .then((decodedMessage) => {
                 // Handle the decoded message
-                console.log(decodedMessage);
+                // console.log(decodedMessage);
                 totalMessagesReceived.innerHTML++;
                 messageOutputBox.innerHTML = JSON.stringify(decodedMessage)
                 lastMessage = decodedMessage
